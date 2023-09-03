@@ -107,4 +107,4 @@ jobs:
           poetry install
       - name: Run coverage tests
         run: |
-          poetry run pytest --cov-report html:./docs/coverage/html --cov-report xml:./docs/coverage/coverage.xml --cov-report term  --cov=pyrelax tests/
+          poetry run pytest --cov-report html:./docs/coverage/html --cov-report xml:./docs/coverage/coverage.xml --cov-report term  --cov=aws-pi-reports tests/
