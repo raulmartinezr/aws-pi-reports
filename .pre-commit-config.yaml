@@ -1,0 +1,56 @@
+repos:
+  - hooks:
+      - args:
+          - --remove-all-unused-imports
+          - --in-place
+        id: autoflake
+    repo: https://github.com/humitos/mirrors-autoflake
+    rev: v1.3
+  - hooks:
+      - id: isort
+    repo: https://github.com/timothycrosley/isort
+    rev: 5.11.5
+  - hooks:
+      - id: black
+    repo: https://github.com/psf/black
+    rev: 23.7.0
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.287
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: ruff check aws_pi_reports
+        types: [python]
+        pass_filenames: false
+        files: (^aws_pi_reports/)
+        args: []
+      - id: ruff
+        name: ruff-tests
+        entry: ruff check tests
+        pass_filenames: false
+        types: [python]
+        files: (^tests/)
+        args: []
+
+  - hooks:
+      - id: pyright
+        name: pyright
+        entry: pyright
+        language: python
+        additional_dependencies: []
+        require_serial: true
+    repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.325
+  - hooks:
+      - id: mypy
+        # exclude: (^docs/|^tests/)
+        # files: (^aws_pi_reports/)
+    repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+    -   id: python-safety-dependencies-check
+        files: pyproject.toml

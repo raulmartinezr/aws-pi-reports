@@ -1,0 +1,149 @@
+[tool.poetry]
+name = "aws-pi-reports"
+version = "0.0.1"
+description = "Python cli to generate reports from RDS PI data"
+readme = "README.md"
+authors = ["Raul Martinez <pirujo@gmail.com>"]
+license = "Apache-2.0"
+homepage = "https://github.com/raulmartinezr/aws-pi-reports"
+repository = "https://github.com/raulmartinezr/aws-pi-reports"
+documentation = "https://github.com/raulmartinezr/aws-pi-reports"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Other Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+packages = [
+    { include = "aws_pi_reports" }
+]
+
+[tool.poetry.scripts]
+aws-pi-reports = "aws_pi_reports.main:app"
+
+[tool.poetry.dependencies]
+python = ">= 3.8, < 3.11"
+boto3 = "~=1.28.40"
+datapane = "~=0.16.7"
+typer = "~=0.9.0"
+# dynaconf= "^3.1.9"
+# pydantic = "^1.9.2"
+# httpx= "^0.23.0"
+# reactivex="^4.0.4"
+# python-dateutil="^2.8.2"
+# pydantic-collections="^0.3.0"
+# semantic-version="^2.10.0"
+# loguru = "^0.6.0"
+# requests-toolbelt="^0.9.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest-asyncio = "^0.19.0"
+pytest = "^7.1.2"
+pytest-dotenv="^0.5.2"
+pytest-httpx="^0.21.0"
+pytest-mock="^3.8.2"
+pytest-xdist = "^2.5.0"
+pytest-cov = "^3.0.0"
+coverage = "^6.4.4"
+black = "^23.7.0"
+isort = "^5.12.0"
+pyright = "^0.0.13"
+mypy = "^1.5.1"
+ruff =  "~=0.0.287"
+coveralls = "^3.3.1"
+pre-commit = "^3.4.0"
+autoflake = "^1.5.1"
+dunamai = "^1.13.0"
+types-pyyaml = "^6.0.11"
+types-setuptools ="^65.3.0"
+types-python-dateutil= "^2.8.19"
+pipdeptree=">=2.13.0"
+
+
+[tool.black]
+line-length = 100
+target_version = ['py310']
+include = '\.py$'
+
+[tool.isort]
+profile = "black"
+line_length=100                # corresponds to -w  flag
+multi_line_output=3            # corresponds to -m  flag
+include_trailing_comma=true    # corresponds to -tc flag
+skip_glob = '^((?!py$).)*$'    # isort all Python files
+float_to_top=true
+
+[tool.mypy]
+python_version = "3.10"
+python_executable=".venv/bin/python"
+follow_imports = "silent"
+files = ["aws_pi_reports"]
+exclude = []
+disallow_any_generics = true
+disallow_untyped_defs = true
+
+[tool.pylint]
+max-line-length = 100
+
+[tool.ruff] # https://beta.ruff.rs/docs/configuration/#using-pyprojecttoml
+# Enable flake8-bugbear (`B`) rules.
+select = ["E", "F", "B"]
+
+# Never enforce `E501` (line length violations).
+ignore = ["E501"]
+
+# Avoid trying to fix flake8-bugbear (`B`) violations.
+unfixable = ["B"]
+
+# Ignore `E402` (import violations) in all `__init__.py` files, and in `path/to/file.py`.
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402"]
+"path/to/file.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402"]
+
+
+[tool.pyright]
+include = ["aws_pi_reports"]
+exclude = ["tests","docs", "docker","aws_pi_reports/dynaconf"]
+defineConstant = { DEBUG = true }
+venvPath =  "."
+venv = ".venv"
+stubPath = ""
+reportMissingImports = false
+reportMissingTypeStubs = false
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "strict"
+addopts = "-n auto"
+
+
+[tool.coverage.run]
+branch = true
+source = ['aws_pi_reports']
+omit = [
+    "tests/*",
+    ""
+    ]
+[tool.coverage.report]
+exclude_lines = [
+  '@(abc\.)?abstractmethod',
+]
+show_missing = true
+
+
+[build-system]
+requires = ["poetry-core>=1.7.0"]
+build-backend = "poetry.core.masonry.api"
+
+
