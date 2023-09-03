@@ -44,8 +44,9 @@ repos:
     rev: v1.1.325
   - hooks:
       - id: mypy
-        # exclude: (^docs/|^tests/)
-        # files: (^aws_pi_reports/)
+        exclude: (^docs/|^tests/)
+        files: (^aws_pi_reports/)
+        # args: ["--verbose"]
     repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.5.1
 

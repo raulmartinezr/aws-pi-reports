@@ -1,0 +1,10 @@
+{
+    "metric-queries":[
+       {
+          "Metric":"os.cpuUtilization.user.avg"
+       },
+       {
+          "Metric":"os.cpuUtilization.idle.avg"
+       }
+    ]
+ }

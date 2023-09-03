@@ -31,8 +31,9 @@ aws-pi-reports = "aws_pi_reports.main:app"
 [tool.poetry.dependencies]
 python = ">= 3.8, < 3.11"
 boto3 = "~=1.28.40"
+boto3-stubs = {extras = ["essential","pi","rds"], version = "~=1.28.40"}
 datapane = "~=0.16.7"
-typer = "~=0.9.0"
+typer = {extras = ["all"], version = "~=0.9.0"}
 # dynaconf= "^3.1.9"
 # pydantic = "^1.9.2"
 # httpx= "^0.23.0"
@@ -68,13 +69,13 @@ pipdeptree=">=2.13.0"
 
 
 [tool.black]
-line-length = 100
+line-length = 160
 target_version = ['py310']
 include = '\.py$'
 
 [tool.isort]
 profile = "black"
-line_length=100                # corresponds to -w  flag
+line_length=160                # corresponds to -w  flag
 multi_line_output=3            # corresponds to -m  flag
 include_trailing_comma=true    # corresponds to -tc flag
 skip_glob = '^((?!py$).)*$'    # isort all Python files
@@ -83,6 +84,9 @@ float_to_top=true
 [tool.mypy]
 python_version = "3.10"
 python_executable=".venv/bin/python"
+show_error_codes = true
+warn_return_any = true
+warn_unused_ignores = true
 follow_imports = "silent"
 files = ["aws_pi_reports","tests"]
 exclude = []
@@ -90,7 +94,7 @@ disallow_any_generics = true
 disallow_untyped_defs = true
 
 [tool.pylint]
-max-line-length = 100
+max-line-length = 160
 
 [tool.ruff] # https://beta.ruff.rs/docs/configuration/#using-pyprojecttoml
 # Enable flake8-bugbear (`B`) rules.
@@ -111,7 +115,7 @@ unfixable = ["B"]
 
 [tool.pyright]
 include = ["aws_pi_reports"]
-exclude = ["tests","docs", "docker","aws_pi_reports/dynaconf"]
+exclude = ["docs", "docker","aws_pi_reports/dynaconf"] #"tests",
 defineConstant = { DEBUG = true }
 venvPath =  "."
 venv = ".venv"
