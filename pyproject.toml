@@ -27,7 +27,7 @@ packages = [{ include = "aws_pi_reports" }]
 aws-pi-reports = "aws_pi_reports.main:app"
 
 [tool.poetry.dependencies]
-python = ">= 3.9, <= 3.11"
+python = ">= 3.9, < 3.12"
 boto3 = "~=1.28.40"
 typer = { extras = ["all"], version = "~=0.9.0" }
 sshtunnel = "~=0.4.0"
