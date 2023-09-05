@@ -1,1 +1,10 @@
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.html
 https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.API.html
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.API.html
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.UsingDashboard.AnalyzeDBLoad.AdditionalMetrics.PostgreSQL.html
+https://docs.aws.amazon.com/performance-insights/latest/APIReference/Welcome.html
+
+
+https://pganalyze.com/docs/install/troubleshooting/rds_pg_stat_statements_shared_preload_libraries#:~:text=This%20error%20indicates%20that%20you,new%20custom%20DB%20Parameter%20Group.
+
+https://pganalyze.com/docs/install/amazon_rds/01_configure_rds_instance

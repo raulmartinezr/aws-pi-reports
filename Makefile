@@ -9,6 +9,7 @@ export CURRENT_VERSION:=$(shell poetry version -s)
 export VERSION=$(shell poetry version -s)
 export CURRENT_USER:=$(shell id -u ${USER}):$(shell id -g ${USER})
 
+export PYTHON_KEYRING_BACKEND:=keyring.backends.null.Keyring
 
 define PRINT_HELP_PYSCRIPT
 import re, sys

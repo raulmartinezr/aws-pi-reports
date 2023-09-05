@@ -1,0 +1,67 @@
+"""RDS reports module"""
+
+from datetime import datetime
+from typing import Any, Literal, TypeVar
+
+from aws_pi_reports.aws import AWSClient
+from aws_pi_reports.reports import Report, read_report_input
+
+StandardRDSReportBuilderTypeDef = TypeVar("StandardRDSReportBuilderTypeDef", bound="StandardRDSReportBuilder")
+
+
+class StandardRDSReport(Report):
+    """
+    Standard RDS Report
+    """
+
+    def __init__(self, report_name: str, client: AWSClient) -> None:
+        super().__init__()
+        self._report_name: str = report_name
+        self._client: AWSClient = client
+
+    def get_service_type(self) -> Literal["DOCDB", "RDS"]:
+        return "RDS"
+
+    def read_report_input(self) -> Any:
+        self._report_input = read_report_input(self._report_name)
+        return self._report_input
+
+    def processs_report_input(self, report_input: Any) -> Any:
+        return report_input
+
+    def processs_query_output(self, query_output: Any) -> Any:
+        return query_output
+
+    def query(self, query_input: Any, db_id: str) -> Any:
+        return self._client.get_resource_metrics_for_db_instance(
+            db_instance_identifier=db_id,
+            service_type="RDS",
+            metric_queries=query_input["metric-queries"],
+            time=datetime.now(),
+            time_delta="-1d",
+            max_results=25,
+            period_in_seconds=3600,
+        )
+
+    def report(self, report_input: Any) -> Any:
+        pass
+
+
+class StandardRDSReportBuilder:
+    "The Concrete Builder."
+
+    def __init__(self) -> None:
+        self._report_name: str
+        self._client: AWSClient
+
+    def with_client(self: StandardRDSReportBuilderTypeDef, client: AWSClient) -> StandardRDSReportBuilderTypeDef:
+        self._client = client
+        return self
+
+    def with_report_name(self: StandardRDSReportBuilderTypeDef, report_name: str) -> StandardRDSReportBuilderTypeDef:
+        self._report_name = report_name
+        return self
+
+    def build(self) -> StandardRDSReport:
+        report = StandardRDSReport(report_name=self._report_name, client=self._client)
+        return report

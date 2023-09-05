@@ -15,9 +15,8 @@ from aws_pi_reports.time import parse_time
 class PIAwsClient:
     """PI AWS Client"""
 
-    def __init__(self, session: Session) -> None:
-        self._session: Session = session
-        self._pi_client: PIClient = self._session.client("pi")  # pyright: ignore[reportUnknownMemberType]
+    def __init__(self) -> None:
+        self._pi_client: PIClient
 
     def pi_get_resource_metrics(
         self,
@@ -28,7 +27,7 @@ class PIAwsClient:
         end_time: datetime,
         period_in_seconds: int = 3600,
         max_results: int = 100,
-        next_token: str = "",
+        next_token: str = "string",
         period_alignment: Literal["END_TIME", "START_TIME"] = "END_TIME",
     ) -> GetResourceMetricsResponseTypeDef:
         result: GetResourceMetricsResponseTypeDef = self._pi_client.get_resource_metrics(
@@ -48,12 +47,8 @@ class PIAwsClient:
 class RDSAwsCClient:
     """RDS AWS Client"""
 
-    def __init__(
-        self,
-        session: Session,
-    ) -> None:
-        self._session: Session = session
-        self._rds_client: RDSClient = self._session.client("rds")  # pyright: ignore[reportUnknownMemberType]
+    def __init__(self) -> None:
+        self._rds_client: RDSClient
 
     def _rds_get_attribute(self, db_instance_identifier: str, attr_name: str) -> Any:
         response: DBInstanceMessageTypeDef = self._rds_client.describe_db_instances(DBInstanceIdentifier=db_instance_identifier)
@@ -66,9 +61,11 @@ class RDSAwsCClient:
 class AWSClient(PIAwsClient, RDSAwsCClient):
     """AWS Client"""
 
-    def __init__(self, aws_profile: str = "", aws_region: str = "") -> None:
+    def __init__(self, aws_profile: str, aws_region: str) -> None:
+        super().__init__()
         self._session: Session = Session(profile_name=aws_profile, region_name=aws_region)
-        super().__init__(session=self._session)  # Initialize all supers with session
+        self._pi_client: PIClient = self._session.client("pi")  # pyright: ignore[reportUnknownMemberType]
+        self._rds_client: RDSClient = self._session.client("rds")  # pyright: ignore[reportUnknownMemberType]
 
     def get_resource_metrics_for_db_instance(
         self,
@@ -79,13 +76,13 @@ class AWSClient(PIAwsClient, RDSAwsCClient):
         time_delta: str,
         period_in_seconds: int = 3600,
         max_results: int = 100,
-        next_token: str = "",
+        next_token: str = "string",
         period_alignment: Literal["END_TIME", "START_TIME"] = "END_TIME",
     ) -> GetResourceMetricsResponseTypeDef:
         start_time, end_time = parse_time(time, time_delta)
 
         if service_type == "RDS":
-            resource_identifier: str = self.rds_get_database_instance_resource_id(db_instance_identifier=db_instance_identifier)
+            resource_identifier: str = RDSAwsCClient.rds_get_database_instance_resource_id(self, db_instance_identifier=db_instance_identifier)
         else:
             raise NotImplementedError(f"Service type {service_type} not implemented")
 

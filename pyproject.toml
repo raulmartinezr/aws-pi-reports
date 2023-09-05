@@ -21,19 +21,23 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-packages = [
-    { include = "aws_pi_reports" }
-]
+packages = [{ include = "aws_pi_reports" }]
 
 [tool.poetry.scripts]
 aws-pi-reports = "aws_pi_reports.main:app"
 
 [tool.poetry.dependencies]
-python = ">= 3.8, < 3.11"
+python = ">= 3.9, < 3.11"
 boto3 = "~=1.28.40"
-boto3-stubs = {extras = ["essential","pi","rds"], version = "~=1.28.40"}
-datapane = "~=0.16.7"
-typer = {extras = ["all"], version = "~=0.9.0"}
+typer = { extras = ["all"], version = "~=0.9.0" }
+sshtunnel = "~=0.4.0"
+psycopg2-binary = "~=2.9.7"
+python-dotenv = "~=1.0.0"
+pandas = "~=2.1.0"
+Jinja2 = "~=3.1.2"
+tabulate = "~=0.9.0"
+
+# dulwich = "~=0.21.6"
 # dynaconf= "^3.1.9"
 # pydantic = "^1.9.2"
 # httpx= "^0.23.0"
@@ -47,9 +51,9 @@ typer = {extras = ["all"], version = "~=0.9.0"}
 [tool.poetry.group.dev.dependencies]
 pytest-asyncio = "^0.19.0"
 pytest = "^7.1.2"
-pytest-dotenv="^0.5.2"
-pytest-httpx="^0.21.0"
-pytest-mock="^3.8.2"
+pytest-dotenv = "^0.5.2"
+pytest-httpx = "^0.21.0"
+pytest-mock = "^3.8.2"
 pytest-xdist = "^2.5.0"
 pytest-cov = "^3.0.0"
 coverage = "^6.4.4"
@@ -57,16 +61,17 @@ black = "^23.7.0"
 isort = "^5.12.0"
 pyright = "^0.0.13"
 mypy = "^1.5.1"
-ruff =  "~=0.0.287"
+ruff = "~=0.0.287"
 coveralls = "^3.3.1"
 pre-commit = "^3.4.0"
 autoflake = "^1.5.1"
 dunamai = "^1.13.0"
 types-pyyaml = "^6.0.11"
-types-setuptools ="^65.3.0"
-types-python-dateutil= "^2.8.19"
-pipdeptree=">=2.13.0"
-
+types-setuptools = "^65.3.0"
+types-python-dateutil = "^2.8.19"
+pipdeptree = ">=2.13.0"
+types-tabulate = "~=0.9.0.3"
+boto3-stubs = { extras = ["essential", "pi", "rds"], version = "~=1.28.40" }
 
 [tool.black]
 line-length = 160
@@ -75,20 +80,20 @@ include = '\.py$'
 
 [tool.isort]
 profile = "black"
-line_length=160                # corresponds to -w  flag
-multi_line_output=3            # corresponds to -m  flag
-include_trailing_comma=true    # corresponds to -tc flag
-skip_glob = '^((?!py$).)*$'    # isort all Python files
-float_to_top=true
+line_length = 160             # corresponds to -w  flag
+multi_line_output = 3         # corresponds to -m  flag
+include_trailing_comma = true # corresponds to -tc flag
+skip_glob = '^((?!py$).)*$'   # isort all Python files
+float_to_top = true
 
 [tool.mypy]
 python_version = "3.10"
-python_executable=".venv/bin/python"
+python_executable = ".venv/bin/python"
 show_error_codes = true
 warn_return_any = true
 warn_unused_ignores = true
 follow_imports = "silent"
-files = ["aws_pi_reports","tests"]
+files = ["aws_pi_reports", "tests"]
 exclude = []
 disallow_any_generics = true
 disallow_untyped_defs = true
@@ -115,9 +120,9 @@ unfixable = ["B"]
 
 [tool.pyright]
 include = ["aws_pi_reports"]
-exclude = ["docs", "docker","aws_pi_reports/dynaconf"] #"tests",
+exclude = ["docs", "docker", "aws_pi_reports/dynaconf"] #"tests",
 defineConstant = { DEBUG = true }
-venvPath =  "."
+venvPath = "."
 venv = ".venv"
 stubPath = ""
 reportMissingImports = false
@@ -135,19 +140,12 @@ addopts = "-n auto"
 [tool.coverage.run]
 branch = true
 source = ['aws_pi_reports']
-omit = [
-    "tests/*",
-    ""
-    ]
+omit = ["tests/*", ""]
 [tool.coverage.report]
-exclude_lines = [
-  '@(abc\.)?abstractmethod',
-]
+exclude_lines = ['@(abc\.)?abstractmethod']
 show_missing = true
 
 
 [build-system]
 requires = ["poetry-core>=1.7.0"]
 build-backend = "poetry.core.masonry.api"
-
-

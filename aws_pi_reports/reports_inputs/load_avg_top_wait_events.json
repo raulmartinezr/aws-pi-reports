@@ -1,0 +1,9 @@
+{
+    "metric-queries":
+    [
+        {
+            "Metric": "db.load.avg",
+            "GroupBy": { "Group": "db.wait_event", "Limit": 25 }
+        }
+    ]
+ }
