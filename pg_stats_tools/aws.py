@@ -51,17 +51,11 @@ class RDSAwsCClient:
         self._rds_client: RDSClient
 
     def _rds_get_attribute(self, db_instance_identifier: str, attr_name: str) -> Any:
-        response: DBInstanceMessageTypeDef = self._rds_client.describe_db_instances(
-            DBInstanceIdentifier=db_instance_identifier
-        )
+        response: DBInstanceMessageTypeDef = self._rds_client.describe_db_instances(DBInstanceIdentifier=db_instance_identifier)
         return response["DBInstances"][0][attr_name]  # type: ignore # pyright: ignore[reportUnknownVariableType]
 
     def rds_get_database_instance_resource_id(self, db_instance_identifier: str) -> str:
-        return str(
-            self._rds_get_attribute(
-                db_instance_identifier=db_instance_identifier, attr_name="DbiResourceId"
-            )
-        )
+        return str(self._rds_get_attribute(db_instance_identifier=db_instance_identifier, attr_name="DbiResourceId"))
 
 
 class AWSClient(PIAwsClient, RDSAwsCClient):
@@ -70,12 +64,8 @@ class AWSClient(PIAwsClient, RDSAwsCClient):
     def __init__(self, aws_profile: str, aws_region: str) -> None:
         super().__init__()
         self._session: Session = Session(profile_name=aws_profile, region_name=aws_region)
-        self._pi_client: PIClient = self._session.client(
-            "pi"
-        )  # pyright: ignore[reportUnknownMemberType]
-        self._rds_client: RDSClient = self._session.client(
-            "rds"
-        )  # pyright: ignore[reportUnknownMemberType]
+        self._pi_client: PIClient = self._session.client("pi")  # pyright: ignore[reportUnknownMemberType]
+        self._rds_client: RDSClient = self._session.client("rds")  # pyright: ignore[reportUnknownMemberType]
 
     def get_resource_metrics_for_db_instance(
         self,
@@ -92,9 +82,7 @@ class AWSClient(PIAwsClient, RDSAwsCClient):
         start_time, end_time = parse_time(time, time_delta)
 
         if service_type == "RDS":
-            resource_identifier: str = RDSAwsCClient.rds_get_database_instance_resource_id(
-                self, db_instance_identifier=db_instance_identifier
-            )
+            resource_identifier: str = RDSAwsCClient.rds_get_database_instance_resource_id(self, db_instance_identifier=db_instance_identifier)
         else:
             raise NotImplementedError(f"Service type {service_type} not implemented")
 

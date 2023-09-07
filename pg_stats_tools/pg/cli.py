@@ -1,8 +1,8 @@
 """cli for RDS reports"""
 
 from typing import Annotated, Any, Dict
-import typer
 
+import typer
 
 pg_params: Dict[str, Any] = {}
 

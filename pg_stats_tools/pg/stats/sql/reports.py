@@ -1,9 +1,9 @@
 """SQL Reports module"""
 
-import pandas as pd
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Dict, List
 
+import pandas as pd
 from rich import print
 from rich.panel import Panel
 from rich.pretty import Pretty

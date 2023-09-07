@@ -25,9 +25,6 @@ def read_sql_input(report_name: str, **kvargs: Any) -> str:
     return Template(data).render(**kvargs)
 
 
-
-
-
 # class ReportRunner:
 #     def __init__(self) -> None:
 #         super().__init__()

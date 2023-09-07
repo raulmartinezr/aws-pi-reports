@@ -2,14 +2,13 @@
 
 
 from enum import Enum
-import inspect
 from typing import Annotated, Any, Dict, List, Union
+
 import typer
 
 from pg_stats_tools.format import TableFormatOption
 from pg_stats_tools.pg.cli import pg_params
 from pg_stats_tools.pg.stats.sql.reports import SQLStatsBySQLType, SQLTimeStatsBySQLType
-
 
 sql = typer.Typer(
     help="""Performance reports for SQL statements based on pg_stat_statements
@@ -117,17 +116,20 @@ def top_sql_stats_by_type(
         typer.Option(help="Number of SQL to fecth (for each SQL type)"),
     ] = 10,
     fetch_field: Annotated[
-        List[SQLStatsFields],
+        Union[List[SQLStatsFields], None],
         typer.Option(help="Additional field to be fechted"),
-    ] = [SQLStatsFields.rows, SQLStatsFields.calls, SQLStatsFields.total_time, SQLStatsFields.mean_time],
+    ] = None,
     sql_type: Annotated[
-        List[SQLTypes],
+        Union[List[SQLTypes], None],
         typer.Option(help="SQL Types"),
-    ] = [SQLTypes.SELECT, SQLTypes.INSERT, SQLTypes.UPDATE, SQLTypes.DELETE],
+    ] = None,
 ) -> None:
     # frame: Union[FrameType, None] = inspect.currentframe()
     # f_name = frame.f_code.co_name if frame else "unknown_function"
-
+    if not sql_type:
+        sql_type = [SQLTypes.SELECT, SQLTypes.INSERT, SQLTypes.UPDATE, SQLTypes.DELETE]
+    if not fetch_field:
+        fetch_field = [SQLStatsFields.rows, SQLStatsFields.calls, SQLStatsFields.total_time, SQLStatsFields.mean_time]
     command_args: Dict[str, Any] = {
         "top_stat_field": top_stat_field.value,
         "format": format.value,
