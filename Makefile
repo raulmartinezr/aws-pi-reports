@@ -3,7 +3,7 @@
 
 SHELL := /bin/bash
 
-export MODULE="aws_pi_reports"
+export MODULE="pg_stats_tools"
 export ROOTDIR:=$(shell pwd)
 export CURRENT_VERSION:=$(shell poetry version -s)
 export VERSION=$(shell poetry version -s)
@@ -45,7 +45,7 @@ help:
 # Development
 
 
-# env-create-version: export  TOX_ENV="aws_pi_reports3.8,aws_pi_reports3.9"
+# env-create-version: export  TOX_ENV="pg_stats_tools3.8,pg_stats_tools3.9"
 # env-create-version:
 # 	tox -e $(TOX_ENV) --recreate
 
@@ -53,7 +53,7 @@ help:
 # 	@echo -e "\r\nYou can activate PYTHON 3.8 environment with:\r\n\r\n$$ source ./.tox/$(TOX_ENV_38)/bin/activate\r\n"
 # 	@echo -e "\r\nYou can activate PYTHON 3.9 environment with:\r\n\r\n$$ source ./.tox/$(TOX_ENV_39)/bin/activate\r\n"
 
-# env-create-version: export  TOX_ENV="aws_pi_reports3.8,aws_pi_reports3.9"
+# env-create-version: export  TOX_ENV="pg_stats_tools3.8,pg_stats_tools3.9"
 # env-update:
 # 	@[ "${TOX_ENV}" ] || ( echo "TOX_ENV is not set"; exit 1 )
 # 	poetry env use $(TOX_ENV);	poetry update
@@ -120,14 +120,14 @@ tag-delete: ## deletes tag
 tests: ## Run tests with mocled db transport
 	poetry run pytest
 
-tests-with-db: export aws_pi_reports_MOCKED_DB=False
+tests-with-db: export pg_stats_tools_MOCKED_DB=False
 tests-with-db: ## Run tests with coouchdb
 	poetry run pytest
 
 lint:## Run pylint
-	# poetry  run pylint --rcfile aws_pi_reports/.pylintrc -j 0 aws_pi_reports
+	# poetry  run pylint --rcfile pg_stats_tools/.pylintrc -j 0 pg_stats_tools
 	# poetry  run pylint --rcfile tests/.pylintrc -j 0 tests
-	poetry run ruff aws_pi_reports
+	poetry run ruff pg_stats_tools
 	poetry run ruff tests
 
 code-check: ## Runs all pre commit code checks
@@ -137,7 +137,7 @@ code-check-diff: ## Runs all pre commit code checks with show-diff-on-failure
 	poetry run pre-commit run --all-files --show-diff-on-failure
 
 coverage:
-	poetry run pytest --cov-report html:./docs/coverage/html --cov-report xml:./docs/coverage/coverage.xml --cov-report term  --cov=aws_pi_reports tests/
+	poetry run pytest --cov-report html:./docs/coverage/html --cov-report xml:./docs/coverage/coverage.xml --cov-report term  --cov=pg_stats_tools tests/
 
 # Cleanup
 
@@ -185,5 +185,5 @@ docker-stop-services:
 	docker-compose -f docker/dev/docker-services.yml down
 
 docker-run:
-	docker-compose -f docker/dev/docker-compose.yml run --rm -u $(CURRENT_USER) aws_pi_reports $(MAKE) $(TARGET)
+	docker-compose -f docker/dev/docker-compose.yml run --rm -u $(CURRENT_USER) pg_stats_tools $(MAKE) $(TARGET)
 

@@ -20,10 +20,10 @@ repos:
     hooks:
       - id: ruff
         name: ruff
-        entry: ruff check aws_pi_reports
+        entry: ruff check pg_stats_tools
         types: [python]
         pass_filenames: false
-        files: (^aws_pi_reports/)
+        files: (^pg_stats_tools/)
         args: []
       - id: ruff
         name: ruff-tests
@@ -45,7 +45,7 @@ repos:
   - hooks:
       - id: mypy
         exclude: (^docs/|^tests/)
-        files: (^aws_pi_reports/)
+        files: (^pg_stats_tools/)
         # args: ["--verbose"]
     repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.5.1

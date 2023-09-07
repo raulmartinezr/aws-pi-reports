@@ -1,4 +1,4 @@
-# Contributing to aws-pi-reports
+# Contributing to pg-stats-tools
 
 Contributions are welcome! You can contribute to this project by:
 

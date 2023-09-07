@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/readme_image.webp" alt="aws-pi-reports, a python cli to generate reports from RDS PI data">
+  <img src="./assets/readme_image.webp" alt="pg-stats-tools, a python cli to generate reports from RDS PI data">
 </p>
 
 <!--

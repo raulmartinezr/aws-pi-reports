@@ -29,7 +29,7 @@ jobs:
             ~/.local
             ~/.cache/pypoetry/cache
             ~/.cache/pypoetry/artifacts
-            ~/work/aws-pi-reports/aws-pi-reports/.venv
+            ~/work/pg-stats-tools/pg-stats-tools/.venv
           key: poetry-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock','**/.pre-commit-config.yaml') }}
 
       - name: Install dependencies
@@ -64,7 +64,7 @@ jobs:
             ~/.local
             ~/.cache/pypoetry/cache
             ~/.cache/pypoetry/artifacts
-            ~/work/aws-pi-reports/aws-pi-reports/.venv
+            ~/work/pg-stats-tools/pg-stats-tools/.venv
           key: poetry-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock','**/.pre-commit-config.yaml') }}
 
       - name: Install dependencies
@@ -97,7 +97,7 @@ jobs:
             ~/.local
             ~/.cache/pypoetry/cache
             ~/.cache/pypoetry/artifacts
-            ~/work/aws-pi-reports/aws-pi-reports/.venv
+            ~/work/pg-stats-tools/pg-stats-tools/.venv
           key: poetry-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock','**/.pre-commit-config.yaml') }}
 
       - name: Install dependencies
@@ -107,4 +107,4 @@ jobs:
           poetry install
       - name: Run coverage tests
         run: |
-          poetry run pytest --cov-report html:./docs/coverage/html --cov-report xml:./docs/coverage/coverage.xml --cov-report term  --cov=aws-pi-reports tests/
+          poetry run pytest --cov-report html:./docs/coverage/html --cov-report xml:./docs/coverage/coverage.xml --cov-report term  --cov=pg-stats-tools tests/

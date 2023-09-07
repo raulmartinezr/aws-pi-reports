@@ -27,7 +27,7 @@ jobs:
         run: |
           PACKAGE_VERSION=$(dunamai from any --no-metadata --style pep440)
           poetry version $PACKAGE_VERSION
-          echo "__version__ = \"$PACKAGE_VERSION\"" > aws-pi-reports/_version.py
+          echo "__version__ = \"$PACKAGE_VERSION\"" > pg-stats-tools/_version.py
 
       - name: Build package
         run: poetry build

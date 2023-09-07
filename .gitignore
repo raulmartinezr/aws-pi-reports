@@ -104,9 +104,6 @@ ENV/
 # mypy
 .mypy_cache/
 
-# IDE settings
-.vscode/
-
 # Terraform
 .aws/
 .terraform

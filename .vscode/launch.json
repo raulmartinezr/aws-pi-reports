@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python: pg stats sql sql-time-stats-by-type",
+            "type": "python",
+            "request": "launch",
+            "module": "pg_stats_tools.main",
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
+            "args": ["pg","stats", "sql", "sql-time-stats-by-type"],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose":["debug-in-terminal"]
+        },
+        {
+            "name": "Python: pg stats sql top-sql-stats-by-type",
+            "type": "python",
+            "request": "launch",
+            "module": "pg_stats_tools.main",
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
+            "args": ["pg","stats", "sql", "top-sql-stats-by-type"],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose":["debug-in-terminal"]
+        }
+    ]
+}

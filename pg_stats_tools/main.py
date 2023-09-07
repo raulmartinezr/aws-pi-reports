@@ -2,7 +2,9 @@
 import typer
 from dotenv import load_dotenv
 
-from aws_pi_reports.rds import cli as rds
+from pg_stats_tools.pg.cli import pg
+from pg_stats_tools.pg.stats.cli import stats
+from pg_stats_tools.pg.stats.sql.cli import sql
 
 load_dotenv()
 # print(os.environ)
@@ -13,9 +15,10 @@ app: typer.Typer = typer.Typer(
     rich_markup_mode="rich",
 )
 
+app.add_typer(pg, name="pg")
+pg.add_typer(stats, name="stats")
+stats.add_typer(sql, name="sql")
 
-app.add_typer(rds.app, name="rds")
-# app.add_typer(docdb.app, name="docdb")
 
 if __name__ == "__main__":
     app()

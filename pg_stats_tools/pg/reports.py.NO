@@ -3,10 +3,12 @@
 from datetime import datetime
 from typing import Any, Literal, TypeVar
 
-from aws_pi_reports.aws import AWSClient
-from aws_pi_reports.reports import Report, read_report_input
+from pg_stats_tools.aws import AWSClient
+from pg_stats_tools.reports import Report, read_report_input
 
-StandardRDSReportBuilderTypeDef = TypeVar("StandardRDSReportBuilderTypeDef", bound="StandardRDSReportBuilder")
+StandardRDSReportBuilderTypeDef = TypeVar(
+    "StandardRDSReportBuilderTypeDef", bound="StandardRDSReportBuilder"
+)
 
 
 class StandardRDSReport(Report):
@@ -54,11 +56,15 @@ class StandardRDSReportBuilder:
         self._report_name: str
         self._client: AWSClient
 
-    def with_client(self: StandardRDSReportBuilderTypeDef, client: AWSClient) -> StandardRDSReportBuilderTypeDef:
+    def with_client(
+        self: StandardRDSReportBuilderTypeDef, client: AWSClient
+    ) -> StandardRDSReportBuilderTypeDef:
         self._client = client
         return self
 
-    def with_report_name(self: StandardRDSReportBuilderTypeDef, report_name: str) -> StandardRDSReportBuilderTypeDef:
+    def with_report_name(
+        self: StandardRDSReportBuilderTypeDef, report_name: str
+    ) -> StandardRDSReportBuilderTypeDef:
         self._report_name = report_name
         return self
 

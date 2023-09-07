@@ -19,16 +19,21 @@ WITH TEMP AS (
             WHEN query ILIKE '%BEGIN%' THEN 'TRANSACTION'
             ELSE 'OTHER'
         END AS sql_type,
-        COUNT(*) AS num_calls,
-        SUM(total_time) AS total_time_ms,
+        COUNT(*) AS num_calls
+        {% if dbid !="_all" %},pg_stat_database.datname AS database{% endif %}
+        ,SUM(total_time) AS total_time_ms,
 	    MAX(total_time) AS max_time_ms,
 		MIN(total_time) AS min_time_ms
     FROM pg_stat_statements
-    GROUP BY sql_type
+    {% if dbid !="_all" %}JOIN pg_stat_database ON pg_stat_statements.dbid = pg_stat_database.datid{% endif %}
+    {% if dbid !="_all" %}WHERE pg_stat_statements.dbid = {{dbid}}{% endif %}
+    GROUP BY sql_type{% if dbid !="_all" %},pg_stat_database.datname{% endif %}
+
 )
 SELECT
-    sql_type,
-    num_calls,
+    sql_type
+    {% if dbid !="_all" %}, database{% endif %}
+    ,num_calls,
     ROUND(total_time_ms::numeric, 0) as total_time_ms,
     (total_time_ms / num_calls)::integer AS avg_time_ms,
 	 ROUND(max_time_ms::numeric, 0) as max_time_ms,
