@@ -27,6 +27,19 @@
             "console": "integratedTerminal",
             "justMyCode": false,
             "purpose":["debug-in-terminal"]
+        },
+        {
+            "name": "Python: pg stats sql  index-usage",
+            "type": "python",
+            "request": "launch",
+            "module": "pg_stats_tools.main",
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
+            "args": ["pg","stats", "sql", " index-usage"],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose":["debug-in-terminal"]
         }
     ]
 }

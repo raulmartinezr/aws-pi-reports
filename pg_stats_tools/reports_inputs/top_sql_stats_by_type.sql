@@ -3,7 +3,7 @@ SELECT
     pg_user.usename AS user,
     pg_stat_database.datname AS database,
     queryid,
-    LEFT(query, 15) AS query,
+    LEFT(query, 50) AS query,
     {{top_stat_field}}
     {% for fetch_field in fetch_fields %}
     , {{fetch_field}}
@@ -12,9 +12,9 @@ FROM pg_stat_statements
 JOIN pg_catalog.pg_user ON pg_stat_statements.userid = pg_catalog.pg_user.usesysid
 JOIN pg_stat_database ON pg_stat_statements.dbid = pg_stat_database.datid
 WHERE
-    query ILIKE '%{{sql_type}}%'
-{% if dbid !="_all" %}
-    AND dbid = {{dbid}}
+    query ILIKE '{{sql_type}}%'
+{% if dbname !="_all" %}
+    AND database = {{database}}
 {% endif %}
 ORDER BY {{top_stat_field}} DESC
 LIMIT {{count}};
