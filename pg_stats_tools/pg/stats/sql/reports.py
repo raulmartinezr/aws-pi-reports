@@ -24,13 +24,13 @@ class SQLTimeStatsBySQLType(Report):
 
     @classmethod
     def get_help(cls) -> str:
-        return """Time statistics for SQL statements grouped by SQL type \n
-        Columns:\n
-            - sql_type: The type of SQL statement\n
-            - avg_time_ms: The average amount of time each SQL statement type took to run, in milliseconds\n
-            - num_calls: The number of times each SQL statement type was called\n
-            - total_time_ms: The total amount of time each SQL statement type took to run, in milliseconds\n
-            - max_time_ms: The maximum amount of time each SQL statement  type took to run, in millisecondsq\n
+        return """Time statistics for SQL statements grouped by SQL type
+        Columns:
+            - sql_type: The type of SQL statement
+            - avg_time_ms: The average amount of time each SQL statement type took to run, in milliseconds
+            - num_calls: The number of times each SQL statement type was called
+            - total_time_ms: The total amount of time each SQL statement type took to run, in milliseconds
+            - max_time_ms: The maximum amount of time each SQL statement  type took to run, in millisecondsq
 
         """
 
@@ -76,31 +76,31 @@ class SQLStatsBySQLType(Report):
 
     @classmethod
     def get_help(cls) -> str:
-        return """Statistics for SQL statements grouped by SQL type \n
-        Columns:\n
-            - user: OID of user who executed the statement\n
-            - database: Database in which the statement was executed\n
-            - queryid:Hash code to identify identical normalized queries.\n
-            - query: Text of a representative statement (just first 15 chars displayed)\n
-            - calls: Number of times the statement was executed\n
-            - total_time: Total time spent executing the statement, in milliseconds\n
-            - min_time: Minimum time spent executing the statement, in milliseconds\n
-            - max_time: Maximum time spent executing the statement, in milliseconds\n
-            - mean_time: Mean time spent executing the statement, in milliseconds\n
-            - stddev_time: Population standard deviation of time spent executing the statement, in milliseconds\n
-            - rows: Total number of rows retrieved or affected by the statement\n
-            - shared_blks_hit: Total number of shared block cache hits by the statement\n
-            - shared_blks_read: Total number of shared blocks read by the statement\n
-            - shared_blks_dirtied: Total number of shared blocks dirtied by the statementd\n
-            - shared_blks_written: Total number of shared blocks written by the statement\n
-            - local_blks_hit: Total number of local block cache hits by the statement\n
-            - local_blks_read: Total number of local blocks read by the statement\n
-            - local_blks_dirtied: Total number of local blocks dirtied by the statement\n
-            - local_blks_written: Total number of local blocks written by the statement\n
-            - temp_blks_read: Total number of temp blocks read by the statement\n
-            - temp_blks_written: Total number of temp blocks written by the statement\n
-            - blk_read_time: Total time the statement spent reading data file blocks, in milliseconds (if track_io_timing is enabled, otherwise zero)\n
-            - blk_write_time: Number of times the statement was executed\n
+        return """Statistics for SQL statements grouped by SQL type
+        Columns:
+            - user: OID of user who executed the statement
+            - database: Database in which the statement was executed
+            - queryid:Hash code to identify identical normalized queries.
+            - query: Text of a representative statement (just first 15 chars displayed)
+            - calls: Number of times the statement was executed
+            - total_time: Total time spent executing the statement, in milliseconds
+            - min_time: Minimum time spent executing the statement, in milliseconds
+            - max_time: Maximum time spent executing the statement, in milliseconds
+            - mean_time: Mean time spent executing the statement, in milliseconds
+            - stddev_time: Population standard deviation of time spent executing the statement, in milliseconds
+            - rows: Total number of rows retrieved or affected by the statement
+            - shared_blks_hit: Total number of shared block cache hits by the statement
+            - shared_blks_read: Total number of shared blocks read by the statement
+            - shared_blks_dirtied: Total number of shared blocks dirtied by the statementd
+            - shared_blks_written: Total number of shared blocks written by the statement
+            - local_blks_hit: Total number of local block cache hits by the statement
+            - local_blks_read: Total number of local blocks read by the statement
+            - local_blks_dirtied: Total number of local blocks dirtied by the statement
+            - local_blks_written: Total number of local blocks written by the statement
+            - temp_blks_read: Total number of temp blocks read by the statement
+            - temp_blks_written: Total number of temp blocks written by the statement
+            - blk_read_time: Total time the statement spent reading data file blocks, in milliseconds (if track_io_timing is enabled, otherwise zero)
+            - blk_write_time: Number of times the statement was executed
         """
 
     def get_name(self) -> str:
@@ -120,7 +120,78 @@ class SQLStatsBySQLType(Report):
 
     def print_header(self) -> None:
         help_panel = Panel(self.get_help(), title="Help", height=len(self.get_help().splitlines()))
-        input_panel = Panel(Pretty(f"Args: {self._command_args}\n{self._sql_types}"), title="Input", height=len(self.get_args()) + 3)
+        input_panel = Panel(Pretty(f"Args: {self._command_args}{self._sql_types}"), title="Input", height=len(self.get_args()) + 3)
+        print(help_panel)
+        print(input_panel)
+
+    def print_data(self, sql_type: str, data: pd.DataFrame) -> None:
+        print("-" * 50)
+        print(f"SQL Type: {sql_type}")
+        print(tabulate(data, headers="keys", tablefmt=self._command_args["format"]))  # pyright: ignore
+
+    def run(self) -> None:
+        self.print_header()
+        for k, v in self._sql_types.items():
+            data = self.execute_sql(sql_type=v)
+            self.print_data(sql_type=k, data=data)
+
+
+class SQLStatsSimplifiedBySQLType(Report):
+    """
+    Standard SQL Report
+    """
+
+    def __init__(self, pg_conn_params: Dict[str, Any], sql_types: Dict[str, str], **kvargs: Any) -> None:
+        self._pg_conn_params = pg_conn_params
+        self._command_args = kvargs
+        self._sql_types = sql_types
+
+    @classmethod
+    def get_help(cls) -> str:
+        return """Statistics for SQL statements grouped by SQL type
+        Columns:
+            - user: OID of user who executed the statement
+            - database: Database in which the statement was executed. Displayed only if dbname is not specified
+            - queryid: Hash code to identify identical normalized queries
+            - calls: Number of times the statement was executed
+            - rows: Total number of rows retrieved or affected by the statement
+            - arows: Average of rows per exexution
+            - time: Total time spent executing the statement, in milliseconds
+            - atime: Average time spent executing the statement, in milliseconds
+            - iotime: Total io time spent executing the statement.This is the sum of blk_read_time and blk_write_time
+            - aiotime: Total io time spent executing the statement.This is the sum of blk_read_time and blk_write_time
+            - blk_r: The number of blocks read that were requested from the Operating System because they weren't available in shared buffers
+            - ablk_r: Average of  blk_r
+            - buff_blk_r: The number of blocks read from the buffer cache. This is typically the fastest way blocks can be read
+                          This is the sum of shared_blks_hit and local_blks_hit.
+            - abuff_blk_r: Average of buff_blk_r
+            - buff_blk_r_pct: Percentage of buff_blk_read
+            - blk_w: The number of blocks written. This is the sum of shared_blks_written, local_blks_written and temp_blks_written
+            - ablk_w: Average of blk_written
+        """
+
+    def get_name(self) -> str:
+        return "top_sql_stats_simplified_by_type"
+
+    def get_args(self) -> Dict[str, Any]:
+        return self._command_args
+
+    def read_sql(self, sql_type: str) -> str:
+        return read_sql_input(self.get_name(), sql_type=sql_type, **self.get_args())
+
+    def execute_sql(self, sql_type: str) -> pd.DataFrame:
+        return execute_sql(
+            sql=self.read_sql(sql_type=sql_type),
+            **self._pg_conn_params,
+        )
+
+    def print_header(self) -> None:
+        help_panel = Panel(self.get_help(), title="Help", height=len(self.get_help().splitlines()) + 1)
+        input_panel = Panel(
+            Pretty(f"""Args: {self._command_args} --- SQL Types: {" ".join(self._sql_types.values())}"""),
+            title="Input",
+            height=len(self.get_args()) + 3,
+        )
         print(help_panel)
         print(input_panel)
 
@@ -149,8 +220,8 @@ class ActiveLongRunningSQL(Report):
 
     @classmethod
     def get_help(cls) -> str:
-        return """Active long running SQL queries \n
-        Columns:\n
+        return """Active long running SQL queries
+        Columns:
         - datid: OID of the database this backend is connected to
 
         - datname: Name of the database this backend is connected to
@@ -225,7 +296,7 @@ class ActiveLongRunningSQL(Report):
 
     def print_header(self) -> None:
         help_panel = Panel(self.get_help(), title="Help", height=len(self.get_help().splitlines()))
-        input_panel = Panel(Pretty(f"Args: {self._command_args}\n{self._sql_types}"), title="Input", height=len(self.get_args()) + 3)
+        input_panel = Panel(Pretty(f"Args: {self._command_args}{self._sql_types}"), title="Input", height=len(self.get_args()) + 3)
         print(help_panel)
         print(input_panel)
 

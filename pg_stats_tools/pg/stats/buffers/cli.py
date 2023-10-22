@@ -19,7 +19,7 @@ def table_cache_hits(
     format: Annotated[
         TableFormatOption,
         typer.Option(help="Output table format", case_sensitive=True),
-    ] = TableFormatOption.grid,
+    ] = TableFormatOption.github,
     schema: Annotated[
         str,
         typer.Option(help="Schema. Default: public. Use _all to get all schemas"),
@@ -36,7 +36,7 @@ def index_cache_hits(
     format: Annotated[
         TableFormatOption,
         typer.Option(help="Output table format", case_sensitive=True),
-    ] = TableFormatOption.grid,
+    ] = TableFormatOption.github,
     schema: Annotated[
         str,
         typer.Option(help="Schema. Default: public. Use _all to get all schemas"),
@@ -53,7 +53,7 @@ def usage(
     format: Annotated[
         TableFormatOption,
         typer.Option(help="Output table format", case_sensitive=True),
-    ] = TableFormatOption.grid,
+    ] = TableFormatOption.github,
     schema: Annotated[
         str,
         typer.Option(help="Schema. Default: public. Use _all to get all schemas"),

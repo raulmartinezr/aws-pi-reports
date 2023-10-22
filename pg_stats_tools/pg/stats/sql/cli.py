@@ -3,12 +3,14 @@
 
 from enum import Enum
 from typing import Annotated, Any, Dict, List, Union
+from datetime import datetime, timedelta
 
 import typer
 
+from pg_stats_tools.time_fn import parse_timestamp
 from pg_stats_tools.format import TableFormatOption
 from pg_stats_tools.pg.cli import pg_params
-from pg_stats_tools.pg.stats.sql.reports import SQLStatsBySQLType, SQLTimeStatsBySQLType, ActiveLongRunningSQL
+from pg_stats_tools.pg.stats.sql.reports import SQLStatsBySQLType, SQLTimeStatsBySQLType, ActiveLongRunningSQL, SQLStatsSimplifiedBySQLType
 
 sql = typer.Typer(
     help="""Performance reports for SQL statements based on pg_stat_statements
@@ -43,6 +45,24 @@ class SQLStatsFields(str, Enum):
     temp_blks_written = "temp_blks_written"
     blk_read_time = "blk_read_time"
     blk_write_time = "blk_write_time"
+
+
+# https://documentation.red-gate.com/sm13/postgresql-top-queries-199098901.html
+class SQLSimplifiedStatsFields(str, Enum):
+    calls = "calls"
+    rows = "rows"
+    arows = "arows"
+    time = "time"
+    atime = "atime"
+    iotime = "iotime"
+    aiotime = "aiotime"
+    blk_r = "blk_r"
+    ablk_r = "ablk_r"
+    buff_blk_r = "buff_blk_r"
+    abuff_blk_r = "abuff_blk_r"
+    buff_blk_r_pct = "buff_blk_r_pct"
+    blk_w = "blk_w"
+    ablk_w = "ablk_w"
 
 
 class ActiveSQLStatsFields(str, Enum):
@@ -80,6 +100,11 @@ class SQLTypes(str, Enum):
     ROLLBACK = "ROLLBACK"
     SAVEPOINT = "SAVEPOINT"
     TRANSACTION = "BEGIN"
+
+
+class SortDir(str, Enum):
+    ASC = "ASC"
+    DESC = "DESC"
 
 
 @sql.command(help=SQLTimeStatsBySQLType.get_help())
@@ -124,7 +149,7 @@ def top_sql_stats_by_type(
     format: Annotated[
         TableFormatOption,
         typer.Option(help="Output table format", case_sensitive=True),
-    ] = TableFormatOption.grid,
+    ] = TableFormatOption.github,
     dbname: Annotated[
         str,
         typer.Option(help="Database name"),
@@ -159,12 +184,49 @@ def top_sql_stats_by_type(
     SQLStatsBySQLType(pg_conn_params=pg_params, sql_types=sql_types, fetch_fields=fetch_fields, **command_args).run()
 
 
+@sql.command(help=SQLStatsSimplifiedBySQLType.get_help())
+def top_sql_stats_simplified_by_type(
+    top_stat_field: Annotated[
+        SQLSimplifiedStatsFields,
+        typer.Option(
+            help="Fielt to use to obtain expensive SQL statements",
+            case_sensitive=True,
+        ),
+    ] = SQLSimplifiedStatsFields.atime,
+    format: Annotated[
+        TableFormatOption,
+        typer.Option(help="Output table format", case_sensitive=True),
+    ] = TableFormatOption.github,
+    dbname: Annotated[
+        str,
+        typer.Option(help="Database name"),
+    ] = "_all",
+    count: Annotated[
+        int,
+        typer.Option(help="Number of SQL to fecth (for each SQL type)"),
+    ] = 10,
+    sort: Annotated[
+        SortDir,
+        typer.Option(help="Sort direction. Defines the relevance of high/low values for top_stat_field"),
+    ] = SortDir.DESC,
+    sql_type: Annotated[
+        List[SQLTypes],
+        typer.Option(help="SQL Types"),
+    ] = [SQLTypes.SELECT, SQLTypes.INSERT, SQLTypes.UPDATE, SQLTypes.DELETE],
+) -> None:
+    # frame: Union[FrameType, None] = inspect.currentframe()
+    # f_name = frame.f_code.co_name if frame else "unknown_function"
+    command_args: Dict[str, Any] = {"top_stat_field": top_stat_field.value, "sort": sort.value, "format": format.value, "dbname": dbname, "count": count}
+    sql_types = {sql_type.name: sql_type.value for sql_type in sql_type}
+    SQLStatsSimplifiedBySQLType(pg_conn_params=pg_params, sql_types=sql_types, **command_args).run()
+
+
 @sql.command(help=ActiveLongRunningSQL.get_help())
 def active_sql_long_running(
     format: Annotated[
         TableFormatOption,
         typer.Option(help="Output table format", case_sensitive=True),
-    ] = TableFormatOption.grid,
+    ] = TableFormatOption.github,
     dbname: Annotated[
         str,
         typer.Option(help="Database name"),
@@ -178,14 +240,12 @@ def active_sql_long_running(
         typer.Option(help="Additional field to be fechted"),
     ] = None,
     sql_type: Annotated[
-        Union[List[SQLTypes], None],
+        List[SQLTypes],
         typer.Option(help="SQL Types"),
-    ] = None,
+    ] = [SQLTypes.SELECT, SQLTypes.INSERT, SQLTypes.UPDATE, SQLTypes.DELETE],
 ) -> None:
     # frame: Union[FrameType, None] = inspect.currentframe()
     # f_name = frame.f_code.co_name if frame else "unknown_function"
-    if not sql_type:
-        sql_type = [SQLTypes.SELECT, SQLTypes.INSERT, SQLTypes.UPDATE, SQLTypes.DELETE]
     if not fetch_field:
         fetch_field = [
             ActiveSQLStatsFields.application_name,
